@@ -24,16 +24,15 @@ jobs:
       - name: Set up NuGet
         uses: NuGet/setup-nuget@v2
 
-      - name: Install WiX Toolset
+      - name: Verify WiX Toolset
         shell: pwsh
         run: |
-          choco uninstall wixtoolset -y --no-progress
-          choco install wixtoolset --version=3.11.2 -y --no-progress
-
-          $wixTargets = "${env:ProgramFiles(x86)}\MSBuild\Microsoft\WiX\v3.x\Wix.targets"
-          if (-not (Test-Path $wixTargets)) {
-            throw "WiX MSBuild targets not found at $wixTargets"
+          # WiX 3.14 is pre-installed on windows-2022 runners
+          $wixBin = "C:\Program Files (x86)\WiX Toolset v3.14\bin"
+          if (-not (Test-Path "$wixBin\heat.exe")) {
+            throw "WiX Toolset not found at $wixBin"
           }
+          Write-Host "Using WiX Toolset v3.14 at $wixBin"
 
       - name: Restore NuGet packages
         shell: pwsh
