@@ -48,7 +48,9 @@ jobs:
             /verbosity:minimal `
             /p:Configuration=Release `
             /p:Platform=x64 `
-            /p:SignOutput=false
+            /p:SignOutput=false `
+            /p:PreBuildEvent="" `
+            /p:PostBuildEvent=""
 
           if ($LASTEXITCODE -ne 0) {
             throw "x64 build failed"
@@ -75,7 +77,9 @@ jobs:
             /verbosity:minimal `
             /p:Configuration=Release `
             /p:Platform=x86 `
-            /p:SignOutput=false
+            /p:SignOutput=false `
+            /p:PreBuildEvent="" `
+            /p:PostBuildEvent=""
 
           if ($LASTEXITCODE -ne 0) {
             throw "x86 build or setup bundle build failed"
