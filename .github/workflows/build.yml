@@ -1,0 +1,94 @@
+
+name: Build Safe Exam Browser 3.10.0
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 90
+
+    steps:
+      - name: Check out SEB 3.10.0
+        uses: actions/checkout@v4
+        with:
+          ref: 3.10.0
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Set up NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Install WiX Toolset
+        shell: pwsh
+        run: |
+          choco install wixtoolset --version=3.11.2 -y --no-progress
+
+          $wixTargets = "${env:ProgramFiles(x86)}\MSBuild\Microsoft\WiX\v3.x\Wix.targets"
+          if (-not (Test-Path $wixTargets)) {
+            throw "WiX MSBuild targets not found at $wixTargets"
+          }
+
+      - name: Restore NuGet packages
+        shell: pwsh
+        run: |
+          nuget restore SafeExamBrowser.sln
+
+      - name: Build x64 release
+        shell: pwsh
+        run: |
+          msbuild SafeExamBrowser.sln `
+            /m `
+            /verbosity:minimal `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /p:SignOutput=false
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "x64 build failed"
+          }
+
+          $x64Msi = "Setup\bin\x64\Release\Setup.msi"
+          if (-not (Test-Path $x64Msi)) {
+            throw "x64 Setup.msi was not generated"
+          }
+
+          Copy-Item $x64Msi "$env:RUNNER_TEMP\SEB_Setup_x64.msi"
+
+      - name: Build x86 release and setup bundle
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory `
+            -Force "Setup\bin\x64\Release" | Out-Null
+
+          Copy-Item "$env:RUNNER_TEMP\SEB_Setup_x64.msi" `
+            "Setup\bin\x64\Release\Setup.msi" -Force
+
+          msbuild SafeExamBrowser.sln `
+            /m `
+            /verbosity:minimal `
+            /p:Configuration=Release `
+            /p:Platform=x86 `
+            /p:SignOutput=false
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "x86 build or setup bundle build failed"
+          }
+
+          $bundle = "SetupBundle\bin\x86\Release\SetupBundle.exe"
+          if (-not (Test-Path $bundle)) {
+            throw "SetupBundle.exe was not generated"
+          }
+
+      - name: Upload setup bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: SEB-3.10.0-SetupBundle
+          path: SetupBundle/bin/x86/Release/SetupBundle.exe
+          if-no-files-found: error
+          retention-days: 14
