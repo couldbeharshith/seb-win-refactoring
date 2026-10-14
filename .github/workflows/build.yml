@@ -78,6 +78,12 @@ jobs:
 
           Copy-Item $x64Msi "$env:RUNNER_TEMP\SEB_Setup_x64.msi"
 
+      - name: Download .NET Framework 4.8 installer
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force C:\Temp | Out-Null
+          Invoke-WebRequest -Uri "https://go.microsoft.com/fwlink/?linkid=2088631" -OutFile "C:\Temp\ndp48-web.exe"
+
       - name: Build x86 release and setup bundle
         shell: pwsh
         run: |
