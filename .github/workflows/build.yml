@@ -13,10 +13,8 @@ jobs:
     timeout-minutes: 90
 
     steps:
-      - name: Check out SEB 3.10.0
+      - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          ref: 3.10.0
 
       - name: Set up MSBuild
         uses: microsoft/setup-msbuild@v2
@@ -51,10 +49,10 @@ jobs:
             /t:"SafeExamBrowser_Runtime;SafeExamBrowser_Client;SebWindowsConfig;SafeExamBrowser_ResetUtility;SafeExamBrowser_Service"
 
           # Run WiX heat to generate component files (without signing)
-          & "C:\Program Files (x86)\WiX Toolset v3.11\bin\heat.exe" dir "SafeExamBrowser.Runtime\bin\x64\Release" -nologo -ag -g1 -scom -srd -sreg -cg ApplicationComponents -dr ApplicationDirectory -sfrag -var var.SafeExamBrowser.Runtime.TargetDir -out Setup\Components\Application.wxs -t Setup\Components\Application.xslt
-          & "C:\Program Files (x86)\WiX Toolset v3.11\bin\heat.exe" dir "SebWindowsConfig\bin\x64\Release" -nologo -ag -g1 -scom -srd -sreg -cg ConfigurationComponents -dr ConfigurationDirectory -sfrag -var var.SebWindowsConfig.TargetDir -out Setup\Components\Configuration.wxs -t Setup\Components\Configuration.xslt
-          & "C:\Program Files (x86)\WiX Toolset v3.11\bin\heat.exe" dir "SafeExamBrowser.ResetUtility\bin\x64\Release" -nologo -ag -g1 -scom -srd -sreg -cg ResetComponents -dr ResetDirectory -sfrag -var var.SafeExamBrowser.ResetUtility.TargetDir -out Setup\Components\Reset.wxs -t Setup\Components\Reset.xslt
-          & "C:\Program Files (x86)\WiX Toolset v3.11\bin\heat.exe" dir "SafeExamBrowser.Service\bin\x64\Release" -nologo -ag -g1 -scom -srd -sreg -cg ServiceComponents -dr ServiceDirectory -sfrag -var var.SafeExamBrowser.Service.TargetDir -out Setup\Components\Service.wxs -t Setup\Components\Service.xslt
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\heat.exe" dir "SafeExamBrowser.Runtime\bin\x64\Release" -nologo -ag -g1 -scom -srd -sreg -cg ApplicationComponents -dr ApplicationDirectory -sfrag -var var.SafeExamBrowser.Runtime.TargetDir -out Setup\Components\Application.wxs -t Setup\Components\Application.xslt
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\heat.exe" dir "SebWindowsConfig\bin\x64\Release" -nologo -ag -g1 -scom -srd -sreg -cg ConfigurationComponents -dr ConfigurationDirectory -sfrag -var var.SebWindowsConfig.TargetDir -out Setup\Components\Configuration.wxs -t Setup\Components\Configuration.xslt
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\heat.exe" dir "SafeExamBrowser.ResetUtility\bin\x64\Release" -nologo -ag -g1 -scom -srd -sreg -cg ResetComponents -dr ResetDirectory -sfrag -var var.SafeExamBrowser.ResetUtility.TargetDir -out Setup\Components\Reset.wxs -t Setup\Components\Reset.xslt
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\heat.exe" dir "SafeExamBrowser.Service\bin\x64\Release" -nologo -ag -g1 -scom -srd -sreg -cg ServiceComponents -dr ServiceDirectory -sfrag -var var.SafeExamBrowser.Service.TargetDir -out Setup\Components\Service.wxs -t Setup\Components\Service.xslt
 
           # Now build Setup project
           msbuild Setup\Setup.wixproj `
@@ -101,10 +99,10 @@ jobs:
             /t:"SafeExamBrowser_Runtime;SafeExamBrowser_Client;SebWindowsConfig;SafeExamBrowser_ResetUtility;SafeExamBrowser_Service"
 
           # Run WiX heat to generate component files (without signing)
-          & "C:\Program Files (x86)\WiX Toolset v3.11\bin\heat.exe" dir "SafeExamBrowser.Runtime\bin\x86\Release" -nologo -ag -g1 -scom -srd -sreg -cg ApplicationComponents -dr ApplicationDirectory -sfrag -var var.SafeExamBrowser.Runtime.TargetDir -out Setup\Components\Application.wxs -t Setup\Components\Application.xslt
-          & "C:\Program Files (x86)\WiX Toolset v3.11\bin\heat.exe" dir "SebWindowsConfig\bin\x86\Release" -nologo -ag -g1 -scom -srd -sreg -cg ConfigurationComponents -dr ConfigurationDirectory -sfrag -var var.SebWindowsConfig.TargetDir -out Setup\Components\Configuration.wxs -t Setup\Components\Configuration.xslt
-          & "C:\Program Files (x86)\WiX Toolset v3.11\bin\heat.exe" dir "SafeExamBrowser.ResetUtility\bin\x86\Release" -nologo -ag -g1 -scom -srd -sreg -cg ResetComponents -dr ResetDirectory -sfrag -var var.SafeExamBrowser.ResetUtility.TargetDir -out Setup\Components\Reset.wxs -t Setup\Components\Reset.xslt
-          & "C:\Program Files (x86)\WiX Toolset v3.11\bin\heat.exe" dir "SafeExamBrowser.Service\bin\x86\Release" -nologo -ag -g1 -scom -srd -sreg -cg ServiceComponents -dr ServiceDirectory -sfrag -var var.SafeExamBrowser.Service.TargetDir -out Setup\Components\Service.wxs -t Setup\Components\Service.xslt
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\heat.exe" dir "SafeExamBrowser.Runtime\bin\x86\Release" -nologo -ag -g1 -scom -srd -sreg -cg ApplicationComponents -dr ApplicationDirectory -sfrag -var var.SafeExamBrowser.Runtime.TargetDir -out Setup\Components\Application.wxs -t Setup\Components\Application.xslt
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\heat.exe" dir "SebWindowsConfig\bin\x86\Release" -nologo -ag -g1 -scom -srd -sreg -cg ConfigurationComponents -dr ConfigurationDirectory -sfrag -var var.SebWindowsConfig.TargetDir -out Setup\Components\Configuration.wxs -t Setup\Components\Configuration.xslt
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\heat.exe" dir "SafeExamBrowser.ResetUtility\bin\x86\Release" -nologo -ag -g1 -scom -srd -sreg -cg ResetComponents -dr ResetDirectory -sfrag -var var.SafeExamBrowser.ResetUtility.TargetDir -out Setup\Components\Reset.wxs -t Setup\Components\Reset.xslt
+          & "C:\Program Files (x86)\WiX Toolset v3.14\bin\heat.exe" dir "SafeExamBrowser.Service\bin\x86\Release" -nologo -ag -g1 -scom -srd -sreg -cg ServiceComponents -dr ServiceDirectory -sfrag -var var.SafeExamBrowser.Service.TargetDir -out Setup\Components\Service.wxs -t Setup\Components\Service.xslt
 
           # Now build Setup and SetupBundle projects
           msbuild SafeExamBrowser.sln `
