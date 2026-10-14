@@ -27,7 +27,8 @@ jobs:
       - name: Install WiX Toolset
         shell: pwsh
         run: |
-          choco install wixtoolset --version=3.11.2 -y --no-progress --force
+          choco uninstall wixtoolset -y --no-progress
+          choco install wixtoolset --version=3.11.2 -y --no-progress
 
           $wixTargets = "${env:ProgramFiles(x86)}\MSBuild\Microsoft\WiX\v3.x\Wix.targets"
           if (-not (Test-Path $wixTargets)) {
