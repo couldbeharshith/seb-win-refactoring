@@ -155,21 +155,29 @@ namespace SafeExamBrowser.Configuration.Integrity
 			{
 				if (File.Exists(appConfig.SessionCacheFilePath))
 				{
-					using (var file = new FileStream(appConfig.SessionCacheFilePath, FileMode.Open))
-					using (var aes = Aes.Create())
-					using (var stream = new CryptoStream(file, aes.CreateDecryptor(SESSION_DATA_KEY, SESSION_DATA_IV), CryptoStreamMode.Read))
-					using (var reader = new StreamReader(stream))
+					try
 					{
-						var line = reader.ReadLine();
-
-						if (line != default)
+						using (var file = new FileStream(appConfig.SessionCacheFilePath, FileMode.Open))
+						using (var aes = Aes.Create())
+						using (var stream = new CryptoStream(file, aes.CreateDecryptor(SESSION_DATA_KEY, SESSION_DATA_IV), CryptoStreamMode.Read))
+						using (var reader = new StreamReader(stream))
 						{
-							var session = line.Split(new string[] { SESSION_DATA_SEPARATOR }, StringSplitOptions.None);
-							var configurationKey = session[0];
-							var startUrl = session[1];
+							var line = reader.ReadLine();
 
-							sessions.Add((configurationKey, startUrl));
+							if (line != default)
+							{
+								var session = line.Split(new string[] { SESSION_DATA_SEPARATOR }, StringSplitOptions.None);
+								var configurationKey = session[0];
+								var startUrl = session[1];
+
+								sessions.Add((configurationKey, startUrl));
+							}
 						}
+					}
+					catch (CryptographicException)
+					{
+						logger.Warn("Session cache file is corrupted, deleting it.");
+						File.Delete(appConfig.SessionCacheFilePath);
 					}
 				}
 
